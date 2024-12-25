@@ -31,21 +31,26 @@ def reorder_dataset(dataset):
 
 
 def compute_similarity(img1, img2) -> float:
-    arr1 = np.array(img1)
-    arr2 = np.array(img2)
+    arr1 = np.array(img1, dtype=np.float32)
+    arr2 = np.array(img2, dtype=np.float32)
 
     if arr1.shape != arr2.shape:
         return 0.0
 
     diff = np.abs(arr1 - arr2)
+    # print(diff)
+    
     mask = (diff.sum(axis=2) > 30).astype(np.uint8)
+    # print (1 - (np.count_nonzero(mask) / mask.size))
     return 1 - (np.count_nonzero(mask) / mask.size)
 
 def create_sequential_mapping(
     dataset: Dataset,
     id_range1: Tuple[int, int],  # Range for first sequence (1,2,3,...)
     id_range2: Tuple[int, int],  # Range for second sequence (1,1,1,2,...)
-    similarity_threshold: float = 0.75,
+    similarity_threshold: float = 0.9,
+    split: str = 'Val',
+    image_cnt: int = 2084
 ) -> Dict[str, List[int]]:
     """
     Create mapping for sequential images where multiple ids in range2
@@ -66,8 +71,9 @@ def create_sequential_mapping(
             img2 = dataset[j]['image']
             similarity = compute_similarity(img1, img2)
             if similarity >= similarity_threshold:
-                matching_ids.append(j)
+                mapping[f'{split}_regional_{j-image_cnt}'] = f'{split}_general_{i}' 
                 duperr = 0
+                id2 += 1
             else:
                 if maxerr_sim < similarity:
                     maxerr_sim = similarity
@@ -77,10 +83,6 @@ def create_sequential_mapping(
                     return mapping
                 break
 
-        if matching_ids:
-            mapping[i] = matching_ids
-            id2 = max(matching_ids) + 1
-
 
 
     return mapping
@@ -89,14 +91,17 @@ def save_mapping(mapping: Dict[str, List[int]], output_file: str):
     """Save mapping as JSON"""
     with open(output_file, 'w') as f:
         json.dump(mapping, f, indent=2)
-
+split='Test'
+image_cnt = 300
 # Load and reorder
-dataset = load_dataset("ntudlcv/dlcv_2024_final1", split='train')
+dataset = load_dataset("ntudlcv/dlcv_2024_final1", split=split.lower())
 reordered_dataset = reorder_dataset(dataset)
 
 mapping = create_sequential_mapping(
     reordered_dataset,
-    id_range1=(0, 6884),    # First sequence
-    id_range2=(6884, len(reordered_dataset)-6884)     # Second sequence
+    id_range1=(0, image_cnt),    # First sequence
+    id_range2=(image_cnt, len(reordered_dataset)-image_cnt),     # Second sequence
+    split=split,
+    image_cnt=image_cnt
 )
-save_mapping(mapping, "sequential_mapping.json")
+save_mapping(mapping, "test_idmap.json")

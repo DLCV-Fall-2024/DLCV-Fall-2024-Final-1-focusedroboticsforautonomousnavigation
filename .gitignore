@@ -8,3 +8,9 @@ val/
 *.ipynb
 .txt
 !few_shot/**/*.json
+LLaVA/
+data/
+images/
+*.jpg
+checkpoint/
+api_key.txt

@@ -29,7 +29,7 @@ For inferencing, please go through the following guide about [Stage 1](#stage-1)
 
 ## Training
 
-For training, substitute training code in preprocessing data. Then, go to LLaVA folder and execute this addtional setup:
+For training, you can modify "--split" argument to "train" in the preprocessing steps. Then, go to LLaVA folder and execute this addtional setup:
 ```
 conda activate DARTS_inference
 pip install -e ".[train]"
@@ -45,14 +45,14 @@ deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero3.json \
     --model_name_or_path  liuhaotian/llava-v1.5-7b \
     --version v1 \
-    --data_path data/stage1_cache/processed_data.json \
-    --image_folder data/stage1_cache \
+    --data_path ../data/stage1_cache/processed_data.json \
+    --image_folder ../data/stage1_cache \
     --vision_tower openai/clip-vit-large-patch14 \
     --mm_vision_select_layer -2 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir ckpt/stage1_finetuned_ckpt \
+    --output_dir ../ckpt/stage1_finetuned_ckpt \
     --num_train_epochs 2 \ 
     --per_device_train_batch_size 8 \
     --per_device_eval_batch_size 1 \
@@ -81,14 +81,14 @@ deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero3.json \
     --model_name_or_path  liuhaotian/llava-v1.5-7b \
     --version v1 \
-    --data_path stage2_with_general/processed_data_new.json  \
-    --image_folder stage2_with_general \
+    --data_path ../data/stage2_cache/processed_data.json  \
+    --image_folder ../data/stage2_cache \
     --vision_tower openai/clip-vit-large-patch14 \
     --mm_vision_select_layer -2 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir /content/drive/MyDrive/dlcv/stage2_lora_3_newprompt/ \
+    --output_dir ../ckpt/stage2_finetuned_ckpt \
     --num_train_epochs 2 \
     --per_device_train_batch_size 8 \
     --per_device_eval_batch_size 1 \

@@ -21,6 +21,7 @@ conda deactivate
 
 Also, clone both checkpoints: (it uses gdown so please install it first)
 ```
+pip install gdown
 bash download_ckpt.sh
 ```
 ## Inferencing
@@ -80,15 +81,15 @@ deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero3.json \
     --model_name_or_path  liuhaotian/llava-v1.5-7b \
     --version v1 \
-    --data_path data/stage2_cache/processed_data.json \
-    --image_folder data/stage2_cache \
+    --data_path stage2_with_general/processed_data_new.json  \
+    --image_folder stage2_with_general \
     --vision_tower openai/clip-vit-large-patch14 \
     --mm_vision_select_layer -2 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir ckpt/stage2_finetuned_ckpt \
-    --num_train_epochs 2 \ 
+    --output_dir /content/drive/MyDrive/dlcv/stage2_lora_3_newprompt/ \
+    --num_train_epochs 2 \
     --per_device_train_batch_size 8 \
     --per_device_eval_batch_size 1 \
     --gradient_accumulation_steps 2 \
@@ -96,7 +97,7 @@ deepspeed llava/train/train_mem.py \
     --save_strategy "steps" \
     --save_steps 200 \
     --save_total_limit 4 \
-    --learning_rate 2e-5 \
+    --learning_rate 1e-4 \
     --weight_decay 0. \
     --warmup_ratio 0.03 \
     --lr_scheduler_type "cosine" \

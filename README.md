@@ -30,7 +30,7 @@ For inferencing, please go through the following guide about [Stage 1](#stage-1)
 
 For training, substitute training code in preprocessing data. Then, go to LLaVA folder and execute this addtional setup:
 ```
-conda activate DARTS_
+conda activate DARTS_inference
 pip install -e ".[train]"
 pip install flash-attn --no-build-isolation
 ```
